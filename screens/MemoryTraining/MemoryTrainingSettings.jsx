@@ -8,9 +8,8 @@ import {
   Image,
   StyleSheet,
   Alert,
-  ScrollView,
 } from "react-native";
-import { launchImageLibrary } from "react-native-image-picker";
+import * as ImagePicker from "expo-image-picker";
 
 const MemoryTrainingSettings = () => {
   const [people, setPeople] = useState([]);
@@ -18,25 +17,30 @@ const MemoryTrainingSettings = () => {
   const [description, setDescription] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // Open image picker
-  const pickImage = () => {
-    launchImageLibrary({
-      mediaType: "photo",
-      selectionLimit: 1,
+  const pickImage = async () => {
+    // Ask for permission (Android usually handles this automatically now)
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert(
+        "Permission needed",
+        "We need access to your photos to continue.",
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
       quality: 0.7,
-    }).then((response) => {
-      if (response.didCancel) return;
-      if (response.errorCode) {
-        Alert.alert("Error", response.errorMessage || "Failed to pick image");
-        return;
-      }
-      if (response.assets && response.assets.length > 0) {
-        setSelectedImage(response.assets[0]);
-      }
     });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setSelectedImage(result.assets[0]);
+    }
   };
 
-  // Add new person
   const addPerson = () => {
     if (!name.trim()) {
       Alert.alert("Oops", "Please enter a name");
@@ -56,18 +60,13 @@ const MemoryTrainingSettings = () => {
 
     setPeople((prev) => [...prev, newPerson]);
 
-    // Clear form
     setName("");
     setDescription("");
     setSelectedImage(null);
 
-    Alert.alert(
-      "Success",
-      `${newPerson.name} has been added to your memory list.`,
-    );
+    Alert.alert("Success", `${newPerson.name} added to memory list`);
   };
 
-  // Remove person
   const removePerson = (id) => {
     setPeople((prev) => prev.filter((person) => person.id !== id));
   };
@@ -76,7 +75,6 @@ const MemoryTrainingSettings = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Memory Training Settings</Text>
 
-      {/* Add New Person Form */}
       <View style={styles.form}>
         <Text style={styles.label}>Name</Text>
         <TextInput
@@ -107,7 +105,6 @@ const MemoryTrainingSettings = () => {
         <Button title="Add to Memory List" onPress={addPerson} />
       </View>
 
-      {/* List of People */}
       <Text style={styles.listTitle}>Memory List ({people.length})</Text>
 
       <FlatList
@@ -116,14 +113,12 @@ const MemoryTrainingSettings = () => {
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Image source={{ uri: item.uri }} style={styles.cardImage} />
-
             <View style={styles.cardInfo}>
               <Text style={styles.cardName}>{item.name}</Text>
               {item.description ? (
                 <Text style={styles.cardDescription}>{item.description}</Text>
               ) : null}
             </View>
-
             <Button
               title="Remove"
               onPress={() => removePerson(item.id)}
@@ -140,11 +135,7 @@ const MemoryTrainingSettings = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 15,
-    backgroundColor: "#f8f8f8",
-  },
+  container: { flex: 1, padding: 15, backgroundColor: "#f8f8f8" },
   title: {
     fontSize: 22,
     fontWeight: "bold",
@@ -157,35 +148,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
   },
-  label: {
-    fontSize: 16,
-    marginTop: 10,
-    marginBottom: 5,
-    fontWeight: "600",
-  },
+  label: { fontSize: 16, marginTop: 10, marginBottom: 5, fontWeight: "600" },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 8,
     padding: 10,
     marginBottom: 10,
-    fontSize: 16,
   },
-  textArea: {
-    height: 80,
-    textAlignVertical: "top",
-  },
+  textArea: { height: 80, textAlignVertical: "top" },
   previewImage: {
     width: "100%",
     height: 180,
     borderRadius: 10,
     marginVertical: 10,
   },
-  listTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
+  listTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
   card: {
     flexDirection: "row",
     backgroundColor: "white",
@@ -194,30 +172,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
   },
-  cardImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 8,
-  },
-  cardInfo: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  cardName: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  cardDescription: {
-    fontSize: 14,
-    color: "#555",
-    marginTop: 4,
-  },
-  emptyText: {
-    textAlign: "center",
-    marginTop: 50,
-    color: "#888",
-    fontSize: 16,
-  },
+  cardImage: { width: 70, height: 70, borderRadius: 8 },
+  cardInfo: { flex: 1, marginLeft: 12 },
+  cardName: { fontSize: 18, fontWeight: "bold" },
+  cardDescription: { fontSize: 14, color: "#555", marginTop: 4 },
+  emptyText: { textAlign: "center", marginTop: 50, color: "#888" },
 });
 
 export default MemoryTrainingSettings;
