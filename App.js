@@ -2,7 +2,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Touchable, TouchableOpacity } from 'react-native';
 import HomeScreen from './screens/HomeScreen';
-import MemoryTraining from './screens/MemoryTrainingScreen';
+import MemoryTraining from './screens/MemoryTraining/MemoryTrainingScreen';
+import MemoryTrainingSettings from './screens/MemoryTraining/MemoryTrainingSettings';
 import { createStaticNavigation, useNavigation } from '@react-navigation/native';
 import { colors } from './screens/assets/colors';
 import * as Font from 'expo-font';
@@ -38,6 +39,24 @@ const RootStack = createNativeStackNavigator({
       },
       MemoryTraining: {
        screen: MemoryTraining,
+       options: {
+        headerBackVisible: false,
+        headerTitle: (props) => {
+          const navigation = useNavigation();
+          return (
+          <View style={styles.header}>
+            <View style={{flexDirection: 'row', gap: 20}}>
+              <Text style={styles.headerText}>Разминка памяти</Text>
+              
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.menuButton}><Image source={require('./screens/assets/menu.png')} style={{height: 13.25, width: 29.75}} /></TouchableOpacity>
+          </View>
+        )},
+       },
+       
+      },
+      MemoryTrainingSettings: {
+       screen: MemoryTrainingSettings,
        options: {
         headerBackVisible: false,
         headerTitle: (props) => {
