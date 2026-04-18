@@ -1,66 +1,223 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { colors } from "../assets/colors";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  FlatList,
+  Image,
+  StyleSheet,
+  Alert,
+  ScrollView,
+} from "react-native";
+import { launchImageLibrary } from "react-native-image-picker";
 
-function MemoryTraining(props) {
-  const navigation = useNavigation();
+const MemoryTrainingSettings = () => {
+  const [people, setPeople] = useState([]);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  // Open image picker
+  const pickImage = () => {
+    launchImageLibrary({
+      mediaType: "photo",
+      selectionLimit: 1,
+      quality: 0.7,
+    }).then((response) => {
+      if (response.didCancel) return;
+      if (response.errorCode) {
+        Alert.alert("Error", response.errorMessage || "Failed to pick image");
+        return;
+      }
+      if (response.assets && response.assets.length > 0) {
+        setSelectedImage(response.assets[0]);
+      }
+    });
+  };
+
+  // Add new person
+  const addPerson = () => {
+    if (!name.trim()) {
+      Alert.alert("Oops", "Please enter a name");
+      return;
+    }
+    if (!selectedImage) {
+      Alert.alert("Oops", "Please select a picture");
+      return;
+    }
+
+    const newPerson = {
+      id: Date.now().toString(),
+      name: name.trim(),
+      description: description.trim(),
+      uri: selectedImage.uri,
+    };
+
+    setPeople((prev) => [...prev, newPerson]);
+
+    // Clear form
+    setName("");
+    setDescription("");
+    setSelectedImage(null);
+
+    Alert.alert(
+      "Success",
+      `${newPerson.name} has been added to your memory list.`,
+    );
+  };
+
+  // Remove person
+  const removePerson = (id) => {
+    setPeople((prev) => prev.filter((person) => person.id !== id));
+  };
+
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../assets/brainMuscle.png")}
-        style={{ height: 200, width: 200, alignSelf: "center" }}
-      />
-      <View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.text}>Начать разминку</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.settingsButton}
-          onPress={() => navigation.navigate("MemoryTrainingSettings")}
-        >
-          <Text style={styles.textSmaller}>Настроить</Text>
-        </TouchableOpacity>
+      <Text style={styles.title}>Memory Training Settings</Text>
+
+      {/* Add New Person Form */}
+      <View style={styles.form}>
+        <Text style={styles.label}>Name</Text>
+        <TextInput
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+          placeholder="Enter person's name"
+        />
+
+        <Text style={styles.label}>Description</Text>
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          value={description}
+          onChangeText={setDescription}
+          placeholder="Short description or memory hook..."
+          multiline
+        />
+
+        <Button title="Pick Picture" onPress={pickImage} />
+
+        {selectedImage && (
+          <Image
+            source={{ uri: selectedImage.uri }}
+            style={styles.previewImage}
+          />
+        )}
+
+        <Button title="Add to Memory List" onPress={addPerson} />
       </View>
+
+      {/* List of People */}
+      <Text style={styles.listTitle}>Memory List ({people.length})</Text>
+
+      <FlatList
+        data={people}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Image source={{ uri: item.uri }} style={styles.cardImage} />
+
+            <View style={styles.cardInfo}>
+              <Text style={styles.cardName}>{item.name}</Text>
+              {item.description ? (
+                <Text style={styles.cardDescription}>{item.description}</Text>
+              ) : null}
+            </View>
+
+            <Button
+              title="Remove"
+              onPress={() => removePerson(item.id)}
+              color="#ff4444"
+            />
+          </View>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No people yet. Add some above.</Text>
+        }
+      />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  title: {
-    color: colors.white,
-    fontSize: 28,
-    fontFamily: "semibold",
-  },
-  text: {
-    color: colors.white,
-    fontFamily: "regular",
-    fontSize: 30,
-  },
-  textSmaller: {
-    color: colors.white,
-    fontFamily: "regular",
-    fontSize: 25,
-  },
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "start",
-    backgroundColor: colors.dark,
+    padding: 15,
+    backgroundColor: "#f8f8f8",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  form: {
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    marginTop: 10,
+    marginBottom: 5,
+    fontWeight: "600",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
     padding: 10,
+    marginBottom: 10,
+    fontSize: 16,
   },
-  button: {
-    backgroundColor: colors.primary,
-    padding: 25,
-    borderRadius: 30,
-    marginBottom: 20,
+  textArea: {
+    height: 80,
+    textAlignVertical: "top",
   },
-  settingsButton: {
-    backgroundColor: colors.primary,
-    padding: 25,
-    borderRadius: 30,
-    marginBottom: 20,
+  previewImage: {
+    width: "100%",
+    height: 180,
+    borderRadius: 10,
+    marginVertical: 10,
+  },
+  listTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  card: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    padding: 10,
+    marginBottom: 12,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  cardImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 8,
+  },
+  cardInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  cardName: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 4,
+  },
+  emptyText: {
+    textAlign: "center",
+    marginTop: 50,
+    color: "#888",
+    fontSize: 16,
   },
 });
 
-export default MemoryTraining;
+export default MemoryTrainingSettings;
