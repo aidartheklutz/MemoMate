@@ -1,9 +1,14 @@
+import React, { useState } from "react";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Touchable, TouchableOpacity } from 'react-native';
 import HomeScreen from './screens/HomeScreen';
 import MemoryTraining from './screens/MemoryTraining/MemoryTrainingScreen';
 import MemoryTrainingSettings from './screens/MemoryTraining/MemoryTrainingSettings';
+import MemoryTrainingGame from './screens/MemoryTraining/MemoryTrainingGame';
+import AIChatScreen from "./screens/AIChatScreen";
+import TodoListScreen from "./screens/TodoListScreen";
+import PhoneBookScreen from "./screens/PhoneBookScreen";
 import { createStaticNavigation, useNavigation } from '@react-navigation/native';
 import { colors } from './screens/assets/colors';
 import * as Font from 'expo-font';
@@ -26,6 +31,7 @@ const RootStack = createNativeStackNavigator({
     Home: {
        screen: HomeScreen,
        options: {
+        headerBackVisible: false,
         headerTitle: (props) => (
           <View style={styles.header}>
             <View style={{flexDirection: 'row', gap: 20}}>
@@ -58,7 +64,7 @@ const RootStack = createNativeStackNavigator({
       MemoryTrainingSettings: {
        screen: MemoryTrainingSettings,
        options: {
-        headerBackVisible: false,
+        headerBackVisible: true,
         headerTitle: (props) => {
           const navigation = useNavigation();
           return (
@@ -71,7 +77,74 @@ const RootStack = createNativeStackNavigator({
           </View>
         )},
        },
-       
+      },
+      MemoryTrainingGame: {
+       screen: MemoryTrainingGame,
+       options: {
+        headerBackVisible: true,
+        headerTitle: (props) => {
+          const navigation = useNavigation();
+          return (
+          <View style={styles.header}>
+            <View style={{flexDirection: 'row', gap: 20}}>
+              <Text style={styles.headerText}>Разминка памяти</Text>
+              
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.menuButton}><Image source={require('./screens/assets/menu.png')} style={{height: 13.25, width: 29.75}} /></TouchableOpacity>
+          </View>
+        )},
+       },
+      },
+      TodoList: {
+       screen: TodoListScreen,
+       options: {
+        headerBackVisible: true,
+        headerTitle: (props) => {
+          const navigation = useNavigation();
+          return (
+          <View style={styles.header}>
+            <View style={{flexDirection: 'row', gap: 20}}>
+              <Text style={styles.headerText}>Разминка памяти</Text>
+              
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.menuButton}><Image source={require('./screens/assets/menu.png')} style={{height: 13.25, width: 29.75}} /></TouchableOpacity>
+          </View>
+        )},
+       },
+      },
+      AIChatScreen: {
+       screen: AIChatScreen,
+       options: {
+        headerBackVisible: true,
+        headerTitle: (props) => {
+          const navigation = useNavigation();
+          return (
+          <View style={styles.header}>
+            <View style={{flexDirection: 'row', gap: 20}}>
+              <Text style={styles.headerText}>Разминка памяти</Text>
+              
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.menuButton}><Image source={require('./screens/assets/menu.png')} style={{height: 13.25, width: 29.75}} /></TouchableOpacity>
+          </View>
+        )},
+       },
+      },
+      PhoneBookScreen: {
+       screen: PhoneBookScreen,
+       options: {
+        headerBackVisible: false,
+        headerTitle: (props) => {
+          const navigation = useNavigation();
+          return (
+          <View style={styles.header}>
+            <View style={{flexDirection: 'row', gap: 20}}>
+              <Text style={styles.headerText}>Контакты</Text>
+              
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.menuButton}><Image source={require('./screens/assets/menu.png')} style={{height: 13.25, width: 29.75}} /></TouchableOpacity>
+          </View>
+        )},
+       },
       },
   },
 });
@@ -93,6 +166,8 @@ export default function App() {
     <Navigation />
   );
 }
+
+
 
 const styles = StyleSheet.create({
   header: {

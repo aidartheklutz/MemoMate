@@ -10,23 +10,22 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { useRoute } from "@react-navigation/native";
 
 const MemoryTrainingSettings = () => {
-  const [people, setPeople] = useState([]);
+  const route = useRoute();
+  const { people, setPeople } = route.params;
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
 
   const pickImage = async () => {
-    // Ask for permission (Android usually handles this automatically now)
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permissionResult.granted) {
-      Alert.alert(
-        "Permission needed",
-        "We need access to your photos to continue.",
-      );
+      Alert.alert("Permission needed", "We need access to your photos.");
       return;
     }
 
@@ -36,7 +35,7 @@ const MemoryTrainingSettings = () => {
       quality: 0.7,
     });
 
-    if (!result.canceled && result.assets && result.assets.length > 0) {
+    if (!result.canceled && result.assets?.length > 0) {
       setSelectedImage(result.assets[0]);
     }
   };
@@ -46,6 +45,7 @@ const MemoryTrainingSettings = () => {
       Alert.alert("Oops", "Please enter a name");
       return;
     }
+
     if (!selectedImage) {
       Alert.alert("Oops", "Please select a picture");
       return;
@@ -64,7 +64,7 @@ const MemoryTrainingSettings = () => {
     setDescription("");
     setSelectedImage(null);
 
-    Alert.alert("Success", `${newPerson.name} added to memory list`);
+    Alert.alert("Success", `${newPerson.name} added!`);
   };
 
   const removePerson = (id) => {

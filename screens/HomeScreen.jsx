@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+
 import {
   Text,
   View,
@@ -24,20 +25,20 @@ function HomeScreen(props) {
       <ScrollView>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate("MemoryTraining")}
+          onPress={() => navigation.navigate("TodoList")}
         >
-          <Text style={styles.title}>Разминка памяти</Text>
+          <Text style={styles.title}>Список дел</Text>
           <Text style={styles.description}>
-            Угадай кто изображён на фотографии
+            Что вы запланировали на сегодня?
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate("MemoryTraining")}
         >
-          <Text style={styles.title}>Список дел</Text>
+          <Text style={styles.title}>Разминка памяти</Text>
           <Text style={styles.description}>
-            Что вы запланировали на сегодня?
+            Угадай кто изображён на фотографии
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -51,7 +52,7 @@ function HomeScreen(props) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate("MemoryTraining")}
+          onPress={() => navigation.navigate("PhoneBookScreen")}
         >
           <Text style={styles.title}>Телефонная книга</Text>
           <Text style={styles.description}>Удобный список ваших контактов</Text>
