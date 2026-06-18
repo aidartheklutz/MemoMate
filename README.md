@@ -8,32 +8,6 @@ You can download an Android build of the prototype here: https://expo.dev/accoun
 
 Please keep in mind that all of this was written under intense time pressure.
 
-## Screenshots
-
-### Main Menu
-
-![main menu](screenshots/menu.jpg)
-
-### MemoChat AI Assistant
-
-![memochat](screenshots/memochat-0.jpg)
-
-![memochat](screenshots/memochat-1.jpg)
-
-### Memory Game
-
-![memory game](screenshots/memory-game.jpg)
-
-![memory game settings](screenshots/memory-game-settings.jpg)
-
-### To-Do List
-
-![todos](screenshots/todos.jpg)
-
-### Phonebook
-
-![phonebook](screenshots/phonebook.jpg)
-
 ## Tech Stack
 
 - **React Native** + **Expo** (cross-platform mobile development)
@@ -59,6 +33,32 @@ npx expo run:ios
 ```
 
 Some parts of the project were created with the assistance of AI.
+
+## Screenshots
+
+### Main Menu
+
+![main menu](screenshots/menu.jpg)
+
+### MemoChat AI Assistant
+
+![memochat](screenshots/memochat-0.jpg)
+
+![memochat](screenshots/memochat-1.jpg)
+
+### Memory Game
+
+![memory game](screenshots/memory-game.jpg)
+
+![memory game settings](screenshots/memory-game-settings.jpg)
+
+### To-Do List
+
+![todos](screenshots/todos.jpg)
+
+### Phonebook
+
+![phonebook](screenshots/phonebook.jpg)
 
 # Brynza Team
 
